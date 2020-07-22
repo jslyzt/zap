@@ -1,23 +1,3 @@
-// Copyright (c) 2016 Uber Technologies, Inc.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-
 package zap
 
 import (
@@ -42,18 +22,18 @@ func TestTakeStacktrace(t *testing.T) {
 
 func TestIsZapFrame(t *testing.T) {
 	zapFrames := []string{
-		"go.uber.org/zap.Stack",
-		"go.uber.org/zap.(*SugaredLogger).log",
-		"go.uber.org/zap/zapcore.(ArrayMarshalerFunc).MarshalLogArray",
-		"github.com/uber/tchannel-go/vendor/go.uber.org/zap.Stack",
-		"github.com/uber/tchannel-go/vendor/go.uber.org/zap.(*SugaredLogger).log",
-		"github.com/uber/tchannel-go/vendor/go.uber.org/zap/zapcore.(ArrayMarshalerFunc).MarshalLogArray",
+		"github.com/jslyzt/zap.Stack",
+		"github.com/jslyzt/zap.(*SugaredLogger).log",
+		"github.com/jslyzt/zap/zapcore.(ArrayMarshalerFunc).MarshalLogArray",
+		"github.com/uber/tchannel-go/vendor/github.com/jslyzt/zap.Stack",
+		"github.com/uber/tchannel-go/vendor/github.com/jslyzt/zap.(*SugaredLogger).log",
+		"github.com/uber/tchannel-go/vendor/github.com/jslyzt/zap/zapcore.(ArrayMarshalerFunc).MarshalLogArray",
 	}
 	nonZapFrames := []string{
 		"github.com/uber/tchannel-go.NewChannel",
 		"go.uber.org/not-zap.New",
-		"go.uber.org/zapext.ctx",
-		"go.uber.org/zap_ext/ctx.New",
+		"github.com/jslyzt/zapext.ctx",
+		"github.com/jslyzt/zap_ext/ctx.New",
 	}
 
 	t.Run("zap frames", func(t *testing.T) {

@@ -1,23 +1,3 @@
-// Copyright (c) 2016 Uber Technologies, Inc.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-
 package zap
 
 import (
@@ -28,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"go.uber.org/zap/zapcore"
+	"github.com/jslyzt/zap/zapcore"
 )
 
 // A Logger provides fast, leveled, structured logging. All methods are safe
@@ -48,7 +28,8 @@ type Logger struct {
 	addCaller bool
 	addStack  zapcore.LevelEnabler
 
-	callerSkip int
+	callerSkip    int
+	tmpCallerSkip int
 }
 
 // New constructs a new Logger from the provided zapcore.Core and Options. If
@@ -253,6 +234,18 @@ func (log *Logger) clone() *Logger {
 	return &copy
 }
 
+// SetTCallerSkip 设置临时callerSkip
+func (log *Logger) SetTCallerSkip(skip int) *Logger {
+	log.tmpCallerSkip = skip
+	return log
+}
+
+// ResetTCallerSkip 重置临时callerSkip
+func (log *Logger) ResetTCallerSkip() *Logger {
+	log.tmpCallerSkip = 0
+	return log
+}
+
 func (log *Logger) check(lvl zapcore.Level, msg string) *zapcore.CheckedEntry {
 	// check must always be called directly by a method in the Logger interface
 	// (e.g., Check, Info, Fatal).
@@ -297,7 +290,7 @@ func (log *Logger) check(lvl zapcore.Level, msg string) *zapcore.CheckedEntry {
 	// Thread the error output through to the CheckedEntry.
 	ce.ErrorOutput = log.errorOutput
 	if log.addCaller {
-		ce.Entry.Caller = zapcore.NewEntryCaller(runtime.Caller(log.callerSkip + callerSkipOffset))
+		ce.Entry.Caller = zapcore.NewEntryCaller(runtime.Caller(log.callerSkip + callerSkipOffset + log.tmpCallerSkip))
 		if !ce.Entry.Caller.Defined {
 			fmt.Fprintf(log.errorOutput, "%v Logger.check error: failed to get caller\n", time.Now().UTC())
 			log.errorOutput.Sync()

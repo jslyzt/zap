@@ -1,23 +1,3 @@
-// Copyright (c) 2016, 2017 Uber Technologies, Inc.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-
 package zap_test
 
 import (
@@ -31,8 +11,8 @@ import (
 	"strings"
 	"testing"
 
-	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
+	"github.com/jslyzt/zap"
+	"github.com/jslyzt/zap/zapcore"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -43,8 +23,8 @@ import (
 // intended to match on the function name, while this is on the full output
 // which includes filenames.
 var _zapPackages = []string{
-	"go.uber.org/zap.",
-	"go.uber.org/zap/zapcore.",
+	"github.com/jslyzt/zap.",
+	"github.com/jslyzt/zap/zapcore.",
 }
 
 func TestStacktraceFiltersZapLog(t *testing.T) {
@@ -96,7 +76,7 @@ func TestStacktraceFiltersVendorZap(t *testing.T) {
 		zapDir, err := os.Getwd()
 		require.NoError(t, err, "Failed to get current directory")
 
-		testDir := filepath.Join(goPath, "src/go.uber.org/zap_test/")
+		testDir := filepath.Join(goPath, "src/github.com/jslyzt/zap_test/")
 		vendorDir := filepath.Join(testDir, "vendor")
 		require.NoError(t, os.MkdirAll(testDir, 0777), "Failed to create source director")
 
@@ -104,7 +84,7 @@ func TestStacktraceFiltersVendorZap(t *testing.T) {
 		setupSymlink(t, curFile, filepath.Join(testDir, curFile))
 
 		// Set up symlinks for zap, and for any test dependencies.
-		setupSymlink(t, zapDir, filepath.Join(vendorDir, "go.uber.org/zap"))
+		setupSymlink(t, zapDir, filepath.Join(vendorDir, "github.com/jslyzt/zap"))
 		for _, dep := range deps {
 			setupSymlink(t, dep.Dir, filepath.Join(vendorDir, dep.ImportPath))
 		}
