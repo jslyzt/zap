@@ -24,45 +24,71 @@ type Core interface {
 	Sync() error
 }
 
-type nopCore struct{}
+// NOpCore nop core
+type NOpCore struct{}
 
 // NewNopCore returns a no-op Core.
-func NewNopCore() Core                                        { return nopCore{} }
-func (nopCore) Enabled(Level) bool                            { return false }
-func (n nopCore) With([]Field) Core                           { return n }
-func (nopCore) Check(_ Entry, ce *CheckedEntry) *CheckedEntry { return ce }
-func (nopCore) Write(Entry, []Field) error                    { return nil }
-func (nopCore) Sync() error                                   { return nil }
+func NewNopCore() Core {
+	return NOpCore{}
+}
+
+// Enabled enable func
+func (NOpCore) Enabled(Level) bool {
+	return false
+}
+
+// With with func
+func (n NOpCore) With([]Field) Core {
+	return n
+}
+
+// Check check func
+func (NOpCore) Check(_ Entry, ce *CheckedEntry) *CheckedEntry {
+	return ce
+}
+
+// Write write func
+func (NOpCore) Write(Entry, []Field) error {
+	return nil
+}
+
+// Sync sync func
+func (NOpCore) Sync() error {
+	return nil
+}
 
 // NewCore creates a Core that writes logs to a WriteSyncer.
 func NewCore(enc Encoder, ws WriteSyncer, enab LevelEnabler) Core {
-	return &ioCore{
+	return &IOCore{
 		LevelEnabler: enab,
 		enc:          enc,
 		out:          ws,
 	}
 }
 
-type ioCore struct {
+// IOCore io core
+type IOCore struct {
 	LevelEnabler
 	enc Encoder
 	out WriteSyncer
 }
 
-func (c *ioCore) With(fields []Field) Core {
+// With write func
+func (c *IOCore) With(fields []Field) Core {
 	clone := c.clone()
 	addFields(clone.enc, fields)
 	return clone
 }
 
-func (c *ioCore) Check(ent Entry, ce *CheckedEntry) *CheckedEntry {
+// Check check func
+func (c *IOCore) Check(ent Entry, ce *CheckedEntry) *CheckedEntry {
 	if c.Enabled(ent.Level) {
 		return ce.AddCore(ent, c)
 	}
 	return ce
 }
 
-func (c *ioCore) Write(ent Entry, fields []Field) error {
+func (c *IOCore) Write(ent Entry, fields []Field) error {
 	buf, err := c.enc.EncodeEntry(ent, fields)
 	if err != nil {
 		return err
@@ -80,12 +106,13 @@ func (c *ioCore) Write(ent Entry, fields []Field) error {
 	return nil
 }
 
-func (c *ioCore) Sync() error {
+// Sync sync func
+func (c *IOCore) Sync() error {
 	return c.out.Sync()
 }
 
-func (c *ioCore) clone() *ioCore {
-	return &ioCore{
+func (c *IOCore) clone() *IOCore {
+	return &IOCore{
 		LevelEnabler: c.LevelEnabler,
 		enc:          c.enc.Clone(),
 		out:          c.out,
